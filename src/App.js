@@ -22,7 +22,19 @@ export default function App() {
   }, []);
 
   async function handleLikeRepository(id) {
-    // Implement "Like Repository" functionality
+    const response = await api.post(`repositories/${id}/like`);
+
+    const likeRepository = response.data;
+
+    const repositoryUpdated = repositories.map((repository) => {
+      if (repository.id === id) {
+        return likeRepository;
+      } else {
+        return repository;
+      }
+    });
+
+    setRepositories(repositoryUpdated);
   }
 
   return (
@@ -35,24 +47,29 @@ export default function App() {
           renderItem={({item: repository}) => (
             <View style={styles.repositoryContainer}>
               <Text style={styles.repository}>{repository.title}</Text>
+
               <View style={styles.techsContainer}>
-                <Text style={styles.tech}>{repository.techs}</Text>
+                {/* {repository.techs.map((tech) => ( */}
+                <Text key={repository.techs} style={styles.tech}>
+                  {repository.techs}
+                </Text>
+                {/* ))} */}
               </View>
 
               <View style={styles.likesContainer}>
                 <Text
                   style={styles.likeText}
                   // Remember to replace "1" below with repository ID: {`repository-likes-${repository.id}`}
-                  testID={'repository-likes-1'}>
-                  3 curtidas
+                  testID={`repository-likes-${repository.id}`}>
+                  {repository.likes} curtidas
                 </Text>
               </View>
 
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => handleLikeRepository(1)}
+                onPress={() => handleLikeRepository(repository.id)}
                 // Remember to replace "1" below with repository ID: {`like-button-${repository.id}`}
-                testID={'like-button-1'}>
+                testID={`like-button-${repository.id}`}>
                 <Text style={styles.buttonText}>Curtir</Text>
               </TouchableOpacity>
             </View>
